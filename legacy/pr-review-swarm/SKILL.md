@@ -369,6 +369,8 @@ For PRs touching 30+ files, scope each specialist to a subset of changed files r
 
 ## Model Selection
 
+Default to `sonnet` for speed and cost. Use `opus` only where deeper reasoning justifies it.
+
 | Role | Recommended Model | Rationale |
 |------|-------------------|-----------|
 | Correctness Reviewer | `opus` | Bug detection requires tracing complex code paths and reasoning about edge cases |

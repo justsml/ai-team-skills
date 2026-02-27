@@ -7,6 +7,23 @@ description: Combined pre-PR shape check and merge-ready review for a branch or 
 
 Use this skill to evaluate a branch or PR. Pick a mode, scope the diff, run specialists in parallel, and synthesize a single actionable report.
 
+## Prerequisites
+
+Before running, verify the environment has the tools this skill depends on. Run these checks at the start and report any that fail — don't silently skip them.
+
+**Required:**
+- `git` — must be in a git repository with a clean working tree (or at least committed changes to review)
+- `gh` (GitHub CLI) — needed for PR metadata, posting reviews, and checking CI status
+  - Install: `brew install gh` (macOS) / `sudo apt install gh` (Linux) / `winget install GitHub.cli` (Windows)
+  - Auth: `gh auth login` — follow the prompts to authenticate with GitHub
+  - Verify: `gh auth status` should show "Logged in to github.com"
+
+**Recommended:**
+- `jq` — useful for parsing JSON output from `gh` and `git` commands
+  - Install: `brew install jq` / `sudo apt install jq`
+
+If `gh` is not installed or not authenticated, warn the user and skip GitHub-dependent steps (PR description fetching, review posting). The core review still works with just `git`.
+
 ## Modes (pick one)
 - Shape: 10x Engineer + Code Organizer + PR Splitter. Use for "sanity check", "10x", or "how should I split".
 - Merge: Correctness + Performance + Maintainability + Domain Logic. Use for "review", "ready to merge", "what did I miss".
@@ -64,6 +81,23 @@ Use this skill to evaluate a branch or PR. Pick a mode, scope the diff, run spec
 
 ### Synthesizer
 - Deduplicate findings, set verdict, and choose a split strategy if needed.
+
+## Model Selection
+
+Default to `sonnet` for speed and cost. Use `opus` only where deeper reasoning justifies it.
+
+| Role | Model | Rationale |
+|------|-------|-----------|
+| 10x Engineer | `sonnet` | Pattern recognition, not deep tracing |
+| Code Organizer | `sonnet` | Structural analysis is systematic |
+| PR Splitter | `sonnet` | Dependency graphs are mechanical |
+| Correctness | `opus` | Bug detection requires tracing complex code paths and edge-case reasoning |
+| Performance | `sonnet` | Matching known anti-patterns (N+1, O(n²), missing parallelism) |
+| Maintainability | `sonnet` | Convention checking is systematic |
+| Domain Logic | `opus` | Validating intent vs. implementation requires nuanced judgment |
+| Synthesizer | `opus` | Must reason across all reports, calibrate severity, and determine verdict |
+
+**Extended context:** For large codebases or PRs touching many files, consider using extended-thinking models with 1M token context windows (e.g. `claude-sonnet-4-6` with `--max-context 1000000`). This lets specialists read full files instead of just diffs, which improves accuracy on integration and regression checks. Use when the diff + surrounding context exceeds ~100K tokens, or when the codebase has deep call chains that require tracing across many files.
 
 ## Findings Format
 Use one file per specialist in `.reports/branch-review/` as `CR-<specialist>.md`.
