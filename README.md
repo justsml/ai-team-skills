@@ -1,33 +1,29 @@
 # AI Team Skills for Claude Code
 
-A collection of Claude Code skills for multi-agent orchestration — parallel specialist teams that analyze, review, and improve codebases.
+A collection of Claude Code skills for multi-agent orchestration -- parallel specialist teams that analyze, review, and improve codebases.
 
 ## Skills
 
 | Skill | What it does |
 |-------|-------------|
-| [`competitive-swarm`](./competitive-swarm/SKILL.md) | Spawn multiple agents with different priority lenses (Minimalist, Best Practices, Performance…) to tackle the same task, then compare and select the best result |
-| [`pr-review-swarm`](./pr-review-swarm/SKILL.md) | Parallel PR review team: Correctness, Performance, Maintainability, and Domain Logic specialists synthesized into a single verdict |
-| [`sanity-check`](./sanity-check/SKILL.md) | Pre-PR shape check: 10x Engineer, Code Organizer, and PR Splitter review your branch before you open the PR |
-| [`deep-audit`](./deep-audit/SKILL.md) | Security audit via parallel specialists: OWASP, Data Privacy, Exploit Research, LLM Vulnerabilities, and a Senior Holistic Reviewer |
-| [`architecture-forensics`](./architecture-forensics/SKILL.md) | Map the actual architecture of a codebase: Dependency Mapper, Data Flow Archaeologist, Boundary Analyst, and Pattern Detector |
-| [`tech-debt-inventory`](./tech-debt-inventory/SKILL.md) | Catalog technical debt across five dimensions (Complexity, Dead Code, Dependencies, Inconsistencies, Test Gaps) and produce a prioritized roadmap |
-| [`performance-profiler`](./performance-profiler/SKILL.md) | Performance analysis via parallel specialists: Algorithmic Complexity, I/O & Queries, Memory & Lifecycle, and Frontend Payload |
+| [`branch-review`](./branch-review/SKILL.md) | Combined pre-PR shape check and merge-ready review (10x perspective + correctness/perf/maintainability) |
+| [`codebase-health`](./codebase-health/SKILL.md) | Unified architecture mapping, tech debt inventory, and performance profiling with a single roadmap |
+| [`security-audit`](./security-audit/SKILL.md) | Security audit via parallel specialists: OWASP, privacy, exploit research, LLM risk, and holistic synthesis |
+| [`swarm-bakeoff`](./swarm-bakeoff/SKILL.md) | Competing or collaborative agent approaches with explicit tradeoff comparison |
 
 ## Installation
 
 Copy skills to your Claude Code user skills directory:
 
 ```bash
-cp -r ./competitive-swarm ./pr-review-swarm ./sanity-check ./deep-audit \
-      ./architecture-forensics ./tech-debt-inventory ./performance-profiler \
+cp -r ./branch-review ./codebase-health ./security-audit ./swarm-bakeoff \
       ~/.claude/skills/
 ```
 
-Or symlink individual skills:
+Or symlink an individual skill:
 
 ```bash
-ln -s $(pwd)/competitive-swarm ~/.claude/skills/competitive-swarm
+ln -s $(pwd)/branch-review ~/.claude/skills/branch-review
 ```
 
 ## Requirements
@@ -49,8 +45,12 @@ These skills are designed to compose. Common chains:
 
 | Goal | Chain |
 |------|-------|
-| Full codebase health check | `architecture-forensics` → `deep-audit` + `tech-debt-inventory` + `performance-profiler` (parallel) |
-| Pre-PR pipeline | `sanity-check` → fix → `pr-review-swarm` |
-| Secure PR review | `pr-review-swarm` + `deep-audit` (parallel, scoped to changed files) |
-| Debt sprint planning | `tech-debt-inventory` → `competitive-swarm` (fix top items with different approaches) |
-| Post-incident remediation | `deep-audit` → `competitive-swarm` (explore fix approaches) |
+| Full codebase health check | `codebase-health` (full) + `security-audit` (parallel) |
+| Pre-PR pipeline | `branch-review` (shape) -> fix -> `branch-review` (merge) |
+| Secure PR review | `branch-review` (merge) + `security-audit` (parallel, scoped to changed files) |
+| Debt sprint planning | `codebase-health` (debt) -> `swarm-bakeoff` |
+| Post-incident remediation | `security-audit` -> `swarm-bakeoff` |
+
+## Legacy
+
+Archived skills are kept in `legacy/` for reference and are not part of the active set.
