@@ -42,15 +42,25 @@ Use this skill to evaluate a branch or PR. Pick a mode, scope the diff, run spec
 
 ### Correctness (Merge)
 - Trace code paths, edge cases, error handling, and regression risk.
+- Verify errors are both logged and handled — no swallowed exceptions or silent failures.
+- Confirm new code paths have unit tests covering happy path and edge cases.
 
 ### Performance (Merge)
 - Check algorithmic complexity, I/O patterns, missing batching, and hot paths.
+- Flag sequential awaits on independent async work — use `Promise.all` or equivalent.
+- Suggest omitting, splitting, or refactoring code that adds unnecessary complexity.
 
 ### Maintainability (Merge)
 - Review naming clarity, abstraction level, consistency, and test coverage.
+- Prefer minimal typing: reuse, derive, or rely on implicit types over redundant annotations.
+- Verify new dependencies are justified and don't introduce unnecessary bloat.
+- Ensure public APIs have appropriate documentation and comments.
 
 ### Domain Logic (Merge)
 - Verify spec alignment, auth/permission checks, data integrity, and UX edge cases.
+- Higher-risk features should use established Feature Flagging systems for controlled rollout. (Amplitude, LaunchDarkly, Env Vars, etc.)
+- Check for missing translation keys — all user-facing text must be properly localized.
+- Confirm changes integrate cleanly with the existing codebase without breaking existing functionality.
 
 ### Synthesizer
 - Deduplicate findings, set verdict, and choose a split strategy if needed.

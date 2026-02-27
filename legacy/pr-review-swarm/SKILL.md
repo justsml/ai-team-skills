@@ -36,6 +36,7 @@ Each specialist is a `general-purpose` subagent focused on a distinct review dim
 - **Null/undefined paths** — unguarded property access on potentially null values, missing optional chaining, unchecked array indexing, destructuring without defaults.
 - **Race conditions** — concurrent state mutations, TOCTOU (time-of-check-to-time-of-use) bugs, async operations without proper ordering, missing locks on shared resources.
 - **Unhandled errors** — missing try/catch on I/O operations, unhandled promise rejections, swallowed errors that hide failures, catch blocks that silently continue.
+- **Missing error logging** — errors that are caught but not logged, making debugging impossible. Every catch should log context (what failed, with what inputs) before handling or re-throwing.
 - **Edge cases** — empty inputs, maximum/minimum values, negative numbers, unicode strings, empty strings vs null vs undefined, zero-length arrays, single-element arrays.
 - **State management bugs** — stale closures in React hooks, missing dependency arrays in useEffect/useMemo/useCallback, state updates on unmounted components, derived state going stale.
 - **Type coercion traps** — loose equality (`==`), truthy/falsy gotchas (`0`, `""`, `NaN`), implicit type conversions in comparisons or arithmetic.
@@ -56,7 +57,8 @@ Each specialist is a `general-purpose` subagent focused on a distinct review dim
 - **Unnecessary work** — re-computing values that could be cached, re-rendering components that didn't change, fetching data that's already available in scope.
 - **Unbounded growth** — arrays/maps that grow without limits, missing pagination on list endpoints, event listeners accumulating without cleanup, caches without eviction.
 - **Blocking operations** — synchronous file I/O on request paths, CPU-intensive computation on the main thread, large JSON.parse/stringify in hot paths.
-- **Missing parallelism** — sequential `await` calls to independent resources that could be `Promise.all`, serial HTTP calls that could be concurrent.
+- **Missing parallelism** — sequential `await` calls to independent resources that could be `Promise.all`, serial HTTP calls that could be concurrent. Always flag sequential awaits on independent async work as a performance issue.
+- **Unnecessary complexity** — code that could be simplified by omitting, splitting, or refactoring. Suggest concrete simplifications when the current approach is over-engineered for its purpose.
 - **Frontend specifics** — unnecessary re-renders from missing memo/useMemo, large bundle imports for small features (`import _ from 'lodash'`), layout thrashing from DOM reads between writes.
 
 **Methodology:** Identifies hot paths affected by the PR. For each, estimates computational complexity and I/O cost. Compares against what existed before. Flags anything that scales worse than linearly with input size. For database changes, considers whether new query patterns degrade at production data volumes.
@@ -72,10 +74,12 @@ Each specialist is a `general-purpose` subagent focused on a distinct review dim
 - **Abstraction level** — over-abstraction (premature frameworks, unnecessary indirection, interfaces with one implementation) or under-abstraction (copy-pasted logic, 200-line functions doing multiple things).
 - **Coupling introduced** — does this change create hidden dependencies between modules? Shared mutable state? Import cycles? Reaching into another module's internals?
 - **Consistency with repo patterns** — does this follow the codebase's conventions for error handling, file organization, naming, and testing? Or does it introduce a competing pattern?
+- **Type verbosity** — unnecessary type annotations where inference suffices, redundant types that could be derived or reused from existing definitions. Prefer minimal typing: rely on implicit types, derive with `typeof`/`ReturnType`/`keyof`, and reuse existing types over declaring new ones.
 - **Dead code** — removed features with leftover artifacts, unused imports, commented-out code, unreachable branches, TODO comments for things already done.
-- **Comments** — complex logic without explanation, outdated comments that describe old behavior, obvious comments that add noise rather than clarity.
-- **Test coverage** — are new code paths tested? Do tests verify behavior (not implementation details)? Are edge cases covered?
+- **Comments** — complex logic without explanation, outdated comments that describe old behavior, obvious comments that add noise rather than clarity. Public APIs should have documentation.
+- **Test coverage** — are new code paths tested? Do tests verify behavior (not implementation details)? Are edge cases covered? New features should include appropriate unit tests.
 - **Readability** — deeply nested conditionals, long parameter lists, boolean parameters without named constants, magic numbers/strings.
+- **Dependency bloat** — are new dependencies justified? Could the functionality be achieved with existing packages or standard library? Flag heavy transitive dependency trees for small features.
 
 **Methodology:** Reads the PR as if encountering this code for the first time six months from now, without access to the PR description. Asks "would I understand this?" Checks every new file/function against existing patterns in the repo. Flags deviations from established conventions even when the new code is technically correct.
 
@@ -94,6 +98,8 @@ Each specialist is a `general-purpose` subagent focused on a distinct review dim
 - **Error UX** — when things fail, does the user see a helpful message or a blank screen / generic 500 / raw error object? Are loading and empty states handled?
 - **Backwards compatibility** — do existing API consumers, stored data, persisted sessions, or saved configurations still work after this change?
 - **Missing feature cases** — are there scenarios the feature description implies but the code doesn't handle? (e.g., "support file upload" but only .jpg/.png, not .pdf or .heic)
+- **Feature flag coverage** — higher-risk features should use Amplitude Feature Flags for controlled rollout. Flag new risky behavior (e.g., new payment flows, auth changes, data migrations) that ships without a feature flag gate.
+- **Missing localization** — all user-facing text (labels, messages, errors, tooltips) must use translation keys. Flag hardcoded strings that bypass i18n. Check for missing keys in translation files.
 
 **Methodology:** Reads the PR description as a specification. Traces each stated requirement to its implementation. Identifies requirements that are partially or incorrectly implemented. Considers the end-user's perspective — not just "does the code run" but "does the feature work as intended in all the ways a user would actually use it."
 
