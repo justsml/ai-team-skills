@@ -30,6 +30,33 @@ If `gh` is not installed or not authenticated, warn the user and skip GitHub-dep
 - Full: Run both for large or risky changes.
 - Solo: For branches < 100 LOC, skip the team. The lead agent does all reviews inline: quick 10x take, file organization scan, ruthless deletion pass, and "split or ship as one PR?" — takes minutes instead of a full team run.
 
+## Report Output
+
+Detect a pre-existing ignored output folder by checking in order:
+1. `temp/` in the project root
+2. `tmp/` in the project root
+3. `.cache/` in the project root
+4. OS temp directory (`/tmp` on macOS/Linux, `$TEMP` on Windows)
+
+Use the first folder that exists. **NEVER modify `.gitignore`** without explicit user approval. If none of the project folders exist, use the OS temp directory.
+
+Organize all report artifacts under a dated subfolder:
+```
+{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{branch-review}/
+```
+Example: `tmp/2026-03-06T14-30-00__branch-review/`
+
+## Project Discovery via CLI
+
+Use common CLI tools to build a quick project profile before starting the review. Check if each binary exists before using it (`command -v <tool> >/dev/null 2>&1`), and fall back to alternatives when unavailable.
+
+- **Directory structure:** `tree -L 2 -I node_modules` — fallback: `find . -maxdepth 2 -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'`
+- **Project size:** `cloc .` or `scc .` — fallback: `find . -type f \( -name '*.ts' -o -name '*.py' -o -name '*.go' \) | xargs wc -l`
+- **Disk usage:** `du -sh .` — fallback: `find . -type f -exec ls -l {} + | awk '{total += $5} END {printf "%.1f MB\n", total/1048576}'`
+- **Git stats:** `git log --oneline -20`, `git shortlog -sn --no-merges`, `git diff --stat`
+- **Dependencies:** Check for `package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, `Gemfile`, `pom.xml`, etc.
+- **Search tools:** Prefer `rg` (ripgrep) or `ag` (silver searcher) over `grep` when available for faster codebase searches
+
 ## Workflow
 1. Gather context from all available sources
    Try each source below. Use what's available, skip what isn't. Record which sources you found in the review header so readers know what informed the review.
@@ -46,11 +73,14 @@ If `gh` is not installed or not authenticated, warn the user and skip GitHub-dep
    - `gh pr checks 2>/dev/null` — CI status for context on known failures
    - `gh pr view --json comments --jq '.comments[].body' 2>/dev/null` — prior review comments
 
-   **Linked tickets (via MCP or `gh`):**
+   **Linked tickets (via MCP or `gh`) — limit to 1-3 minutes:**
    - Check the PR body and commit messages for ticket references (e.g. `PROJ-123`, `#456`, Jira/Linear/Shortcut URLs)
-   - If an MCP server provides issue/ticket tools (e.g. Jira, Linear, GitHub Issues), use them to fetch the ticket description, acceptance criteria, and status
+   - Discover available ticket trackers via `ToolSearch: "issue"` or `ToolSearch: "ticket"` — use Linear, Jira, Shortcut, or other MCP tools if available
+   - If an MCP server provides issue/ticket tools, use them to fetch the ticket description, acceptance criteria, and status
    - If no MCP ticket tool is available, try `gh issue view <number> --json title,body 2>/dev/null` for GitHub Issues
+   - Check for supporting documentation in Google Drive, Notion, or Confluence MCP if available
    - Ticket context helps the Domain Logic reviewer validate intent vs. implementation
+   - If no ticket/PR info is found after 1-3 minutes, proceed with just the codebase and any available documentation
 
    **Report which sources were used** at the top of the synthesizer output:
    ```
@@ -66,10 +96,10 @@ If `gh` is not installed or not authenticated, warn the user and skip GitHub-dep
    - < 100 LOC and < 5 files: Solo mode — lead agent does all reviews inline, no team needed.
    - 100-500 LOC: Shape or Merge based on user request.
    - > 500 LOC: Full; scope 10x + Organizer + Ruthless Reviewer to most-changed files.
-4. Create output dir `.reports/branch-review/` (add `.reports/` to `.gitignore` if missing).
+4. Create the report output directory (see **Report Output** above).
 5. Create team: `TeamCreate: team_name = "branch-review"`.
 6. Create tasks per specialist and run them in parallel.
-7. Run Synthesizer after specialists finish; write `.reports/branch-review/branch-review.md`.
+7. Run Synthesizer after specialists finish; write `branch-review.md` in the report directory.
 
 ## Specialists
 ### 10x Engineer (Shape)
@@ -141,7 +171,7 @@ Default to `sonnet` for speed and cost. Use `opus` only where deeper reasoning j
 **Extended context:** For large codebases or PRs touching many files, consider using extended-thinking models with 1M token context windows (e.g. `claude-sonnet-4-6` with `--max-context 1000000`). This lets specialists read full files instead of just diffs, which improves accuracy on integration and regression checks. Use when the diff + surrounding context exceeds ~100K tokens, or when the codebase has deep call chains that require tracing across many files.
 
 ## Findings Format
-Use one file per specialist in `.reports/branch-review/` as `CR-<specialist>.md`.
+Use one file per specialist in the report directory as `CR-<specialist>.md`.
 
 ```markdown
 # <Specialist> Findings
@@ -162,7 +192,7 @@ Use one file per specialist in `.reports/branch-review/` as `CR-<specialist>.md`
 - <what works well>
 ```
 
-Synthesizer output: `.reports/branch-review/branch-review.md`
+Synthesizer output: `branch-review.md` (in report directory)
 
 ```markdown
 # Change Review - <Branch>

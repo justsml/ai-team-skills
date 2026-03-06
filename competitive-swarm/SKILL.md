@@ -26,13 +26,53 @@ Use this skill to run multiple approaches in parallel, then compare and select t
 - Accessibility: WCAG, keyboard, semantics.
 - UX Polish: loading states, transitions.
 
+## Report Output
+
+Detect a pre-existing ignored output folder by checking in order:
+1. `temp/` in the project root
+2. `tmp/` in the project root
+3. `.cache/` in the project root
+4. OS temp directory (`/tmp` on macOS/Linux, `$TEMP` on Windows)
+
+Use the first folder that exists. **NEVER modify `.gitignore`** without explicit user approval. If none of the project folders exist, use the OS temp directory.
+
+Organize all report artifacts under a dated subfolder:
+```
+{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{competitive-swarm}/
+```
+Example: `tmp/2026-03-06T14-30-00__competitive-swarm/`
+
+## Project Discovery via CLI
+
+Use common CLI tools to build a quick project profile before starting the swarm. Check if each binary exists before using it (`command -v <tool> >/dev/null 2>&1`), and fall back to alternatives when unavailable.
+
+- **Directory structure:** `tree -L 2 -I node_modules` — fallback: `find . -maxdepth 2 -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'`
+- **Project size:** `cloc .` or `scc .` — fallback: `find . -type f \( -name '*.ts' -o -name '*.py' -o -name '*.go' \) | xargs wc -l`
+- **Disk usage:** `du -sh .` — fallback: `find . -type f -exec ls -l {} + | awk '{total += $5} END {printf "%.1f MB\n", total/1048576}'`
+- **Git stats:** `git log --oneline -20`, `git shortlog -sn --no-merges`, `git diff --stat`
+- **Dependencies:** Check for `package.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, `Gemfile`, `pom.xml`, etc.
+- **Search tools:** Prefer `rg` (ripgrep) or `ag` (silver searcher) over `grep` when available for faster codebase searches
+
+## Branch / PR / Ticket Context
+
+Spend 1-3 minutes gathering project context from available integrations. If nothing is found, proceed with just the codebase.
+
+- **Git:** `git branch --show-current`, `git log --oneline -5`
+- **GitHub PR:** `gh pr view --json headRefName,baseRefName,number,title,body 2>/dev/null`
+- **Linked tickets:** Scan PR body and recent commits for ticket references (e.g. `PROJ-123`, `#456`, Jira/Linear/Shortcut URLs)
+- **MCP integrations:** Discover ticket trackers via `ToolSearch: "issue"` or `ToolSearch: "ticket"` — use Linear, Jira, or other MCP tools if available
+- **Documentation:** Check for relevant docs in Google Drive, Notion, or Confluence MCP if available
+- **CI status:** `gh pr checks 2>/dev/null` or `gh run list --limit 3 2>/dev/null`
+
+Record what was found (and what wasn't) so the swarm has clear provenance.
+
 ## Workflow
 1. Clarify the deliverable and success criteria.
 2. Pick mode and lenses.
-3. Create output dir `.reports/competitive-swarm/` (add `.reports/` to `.gitignore` if missing).
+3. Create the report output directory (see **Report Output** above).
 4. Create team: `TeamCreate: team_name = "competitive-swarm"`.
 5. Create one task per agent with its lens baked into the prompt.
-6. Run agents in parallel; each writes `BAKEOFF-<lens>.md`.
+6. Run agents in parallel; each writes `BAKEOFF-<lens>.md` in the report directory.
 7. Run a Judge agent to compare, pick a winner, and synthesize into a single plan.
 
 ### Monitoring & Status Updates
@@ -46,7 +86,7 @@ While agents are working, output status updates to the user every 1-5 minutes:
 **Do NOT go silent while waiting for background agents.** The user should always know work is happening. Use `SendMessage` or direct text output to keep them informed. If all agents are still running and there's nothing new to report, a brief "Still waiting on X agents..." is sufficient.
 
 ## Findings Format
-Agent output: `.reports/competitive-swarm/BAKEOFF-<lens>.md`
+Agent output: `BAKEOFF-<lens>.md` (in report directory)
 
 ```markdown
 # <Lens> Solution
@@ -64,7 +104,7 @@ Agent output: `.reports/competitive-swarm/BAKEOFF-<lens>.md`
 <steps or pseudocode>
 ```
 
-Judge output: `.reports/competitive-swarm/BAKEOFF-RESULT.md`
+Judge output: `BAKEOFF-RESULT.md` (in report directory)
 
 ```markdown
 # Bakeoff Result - <Task>

@@ -10,7 +10,7 @@ A collection of Claude Code skills for multi-agent orchestration -- parallel spe
 | [`codebase-health`](./codebase-health/SKILL.md) | Unified architecture mapping, tech debt inventory, and performance profiling with a single roadmap |
 | [`security-audit`](./security-audit/SKILL.md) | Security audit via parallel specialists: OWASP, privacy, exploit research, LLM risk, and holistic synthesis |
 | [`competitive-swarm`](./competitive-swarm/SKILL.md) | Competing or collaborative agent approaches with explicit tradeoff comparison |
-
+ 
 ## Requirements
 
 These skills use Claude Code's agent team features. Make sure you have agent teams enabled:
