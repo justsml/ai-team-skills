@@ -147,7 +147,7 @@ Use common CLI tools to build a quick project profile before starting the review
 - Confirm changes integrate cleanly with the existing codebase without breaking existing functionality.
 
 ### Synthesizer
-- Perform an independent assessment BEFORE reading specialist reports: overall shape (coherent unit of work or bundled unrelated changes?), commit hygiene (do messages tell the story? fixup commits to squash?), and missing pieces (tests, migrations, docs, type exports).
+- Perform an independent assessment BEFORE reading specialist reports: overall shape (coherent unit of work or bundled unrelated changes?) and missing pieces (tests, migrations, docs, type exports).
 - Then read all specialist reports: deduplicate, resolve conflicts (e.g. Ruthless Reviewer says "delete" but 10x Engineer says "extract to shared module" — pick one with rationale), set verdict, and choose a split strategy if needed.
 - Identify the single highest-leverage improvement: "If you do one thing before opening the PR, do this."
 - Draft follow-up issues for work that improves the code but shouldn't block shipping.
@@ -208,9 +208,6 @@ Synthesizer output: `branch-review-swarm.md` (in report directory)
 1. <highest priority — "if you do one thing, do this">
 2. <next fix>
 3. <next fix>
-
-## Commit hygiene (if Shape/Full)
-<Do commits tell the story? Fixup commits to squash? Missing pieces?>
 
 ## Deletion candidates (if Shape/Full)
 <Summary from Ruthless Reviewer: lines deletable, files deletable, types removable, tests removable, estimated complexity reduction>
