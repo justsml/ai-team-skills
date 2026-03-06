@@ -83,7 +83,7 @@ While agents are working, output status updates to the user every 1-5 minutes:
 
 ### Debt
 - Complexity Analyst
-- Dead Code Hunter
+- Dead Code Hunter — flag apparently unused code. On feature branches, check for sequenced rollout signals (numbered branches, linked tickets referencing future work, TODO/NOTE comments) and mark as intentional scaffolding if evidence exists; recommend adding a `// TODO(TICKET): used by <next PR>` comment if none exists. **On `main`/`master`, be aggressive** — code merged without consumers is dead code, flag it for deletion regardless of apparent intent.
 - Dependency Auditor
 - Inconsistency Detector
 - Test Gap Analyst
