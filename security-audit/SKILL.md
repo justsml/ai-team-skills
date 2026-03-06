@@ -16,6 +16,16 @@ Use this skill to run a multi-lens security review and synthesize a severity-ran
 4. Create tasks per specialist and run in parallel.
 5. Run the Holistic Reviewer after specialists finish; write `.reports/security-audit/SECURITY-AUDIT.md`.
 
+### Monitoring & Status Updates
+
+While agents are working, output status updates to the user every 1-5 minutes:
+
+- Which agents have completed and which are still running
+- Any early outputs from completed agents (read the files if available)
+- Estimated progress based on task completion count
+
+**Do NOT go silent while waiting for background agents.** The user should always know work is happening. Use `SendMessage` or direct text output to keep them informed. If all agents are still running and there's nothing new to report, a brief "Still waiting on X agents..." is sufficient.
+
 ## Specialists
 - OWASP AppSec
 - Data Privacy and Exfiltration

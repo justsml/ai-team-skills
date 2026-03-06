@@ -24,6 +24,16 @@ Use this skill to assess a codebase at the system level. Pick one or more tracks
 5. Create tasks per track and run in parallel.
 6. Run the Health Lead synthesizer after specialists finish; write `.reports/codebase-health/CODEBASE-HEALTH.md`.
 
+### Monitoring & Status Updates
+
+While agents are working, output status updates to the user every 1-5 minutes:
+
+- Which agents have completed and which are still running
+- Any early outputs from completed agents (read the files if available)
+- Estimated progress based on task completion count
+
+**Do NOT go silent while waiting for background agents.** The user should always know work is happening. Use `SendMessage` or direct text output to keep them informed. If all agents are still running and there's nothing new to report, a brief "Still waiting on X agents..." is sufficient.
+
 ## Track Specialists
 ### Architecture
 - Dependency Mapper
@@ -108,4 +118,4 @@ Synthesizer output: `.reports/codebase-health/CODEBASE-HEALTH.md`
 ```
 
 ## Follow-on
-Use `swarm-bakeoff` when multiple refactor or optimization approaches are viable.
+Use `competitive-swarm` when multiple refactor or optimization approaches are viable.

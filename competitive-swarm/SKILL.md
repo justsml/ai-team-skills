@@ -1,9 +1,9 @@
 ---
-name: swarm-bakeoff
-description: Orchestrate multiple agents to produce competing solutions and compare tradeoffs. Use when the user wants a bake-off, multiple approaches, or explicit tradeoff exploration (minimal vs best practices vs performance).
+name: competitive-swarm
+description: Orchestrate multiple agents to produce competing solutions and compare tradeoffs. Use when the user wants a bake-off, competitive swarm, multiple approaches, or explicit tradeoff exploration (minimal vs best practices vs performance).
 ---
 
-# Swarm Bakeoff
+# Competitive Swarm
 
 Use this skill to run multiple approaches in parallel, then compare and select the best outcome.
 
@@ -29,14 +29,24 @@ Use this skill to run multiple approaches in parallel, then compare and select t
 ## Workflow
 1. Clarify the deliverable and success criteria.
 2. Pick mode and lenses.
-3. Create output dir `.reports/swarm-bakeoff/` (add `.reports/` to `.gitignore` if missing).
-4. Create team: `TeamCreate: team_name = "swarm-bakeoff"`.
+3. Create output dir `.reports/competitive-swarm/` (add `.reports/` to `.gitignore` if missing).
+4. Create team: `TeamCreate: team_name = "competitive-swarm"`.
 5. Create one task per agent with its lens baked into the prompt.
 6. Run agents in parallel; each writes `BAKEOFF-<lens>.md`.
 7. Run a Judge agent to compare, pick a winner, and synthesize into a single plan.
 
+### Monitoring & Status Updates
+
+While agents are working, output status updates to the user every 1-5 minutes:
+
+- Which agents have completed and which are still running
+- Any early outputs from completed agents (read the files if available)
+- Estimated progress based on task completion count
+
+**Do NOT go silent while waiting for background agents.** The user should always know work is happening. Use `SendMessage` or direct text output to keep them informed. If all agents are still running and there's nothing new to report, a brief "Still waiting on X agents..." is sufficient.
+
 ## Findings Format
-Agent output: `.reports/swarm-bakeoff/BAKEOFF-<lens>.md`
+Agent output: `.reports/competitive-swarm/BAKEOFF-<lens>.md`
 
 ```markdown
 # <Lens> Solution
@@ -54,7 +64,7 @@ Agent output: `.reports/swarm-bakeoff/BAKEOFF-<lens>.md`
 <steps or pseudocode>
 ```
 
-Judge output: `.reports/swarm-bakeoff/BAKEOFF-RESULT.md`
+Judge output: `.reports/competitive-swarm/BAKEOFF-RESULT.md`
 
 ```markdown
 # Bakeoff Result - <Task>
