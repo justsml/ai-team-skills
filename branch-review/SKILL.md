@@ -30,13 +30,36 @@ If `gh` is not installed or not authenticated, warn the user and skip GitHub-dep
 - Full: Run both for large or risky changes.
 
 ## Workflow
-1. Scope changes
+1. Gather context from all available sources
+   Try each source below. Use what's available, skip what isn't. Record which sources you found in the review header so readers know what informed the review.
+
+   **Git (always available):**
    - `git branch --show-current`
    - `git merge-base main HEAD`
    - `git log --oneline main..HEAD`
    - `git diff --stat main...HEAD`
    - `git diff main...HEAD`
-   - `gh pr view --json title,body 2>/dev/null`
+
+   **GitHub PR (via `gh` CLI):**
+   - `gh pr view --json title,body,labels,milestone,assignees,reviewRequests 2>/dev/null`
+   - `gh pr checks 2>/dev/null` — CI status for context on known failures
+   - `gh pr view --json comments --jq '.comments[].body' 2>/dev/null` — prior review comments
+
+   **Linked tickets (via MCP or `gh`):**
+   - Check the PR body and commit messages for ticket references (e.g. `PROJ-123`, `#456`, Jira/Linear/Shortcut URLs)
+   - If an MCP server provides issue/ticket tools (e.g. Jira, Linear, GitHub Issues), use them to fetch the ticket description, acceptance criteria, and status
+   - If no MCP ticket tool is available, try `gh issue view <number> --json title,body 2>/dev/null` for GitHub Issues
+   - Ticket context helps the Domain Logic reviewer validate intent vs. implementation
+
+   **Report which sources were used** at the top of the synthesizer output:
+   ```
+   **Sources:** git diff, gh pr (title, body, 2 comments), PROJ-123 (via Linear MCP)
+   ```
+   If a source was unavailable, note it so gaps are visible:
+   ```
+   **Sources:** git diff, gh pr (no PR found — reviewing branch only), no linked tickets found
+   ```
+
 2. Identify tech stack and key directories.
 3. Decide mode
    - < 100 LOC: Merge only, skip PR Splitter.
@@ -127,6 +150,7 @@ Synthesizer output: `.reports/branch-review/branch-review.md`
 # Change Review - <Branch>
 
 **Mode:** <Shape | Merge | Full>
+**Sources:** <list sources used — e.g. git diff, gh pr, PROJ-123 via Linear MCP>
 **Files changed:** <count>
 **Lines:** +<add> / -<del>
 
