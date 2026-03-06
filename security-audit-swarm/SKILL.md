@@ -1,5 +1,5 @@
 ---
-name: security-audit
+name: security-audit-swarm
 description: Deep security audit for a codebase using OWASP, data privacy, exploit research, LLM risk, and holistic review. Use when the user asks for a security audit, vulnerability assessment, penetration-style review, or hardening guidance.
 ---
 
@@ -19,9 +19,9 @@ Use the first folder that exists. **NEVER modify `.gitignore`** without explicit
 
 Organize all report artifacts under a dated subfolder:
 ```
-{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{security-audit}/
+{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{security-audit-swarm}/
 ```
-Example: `tmp/2026-03-06T14-30-00__security-audit/`
+Example: `tmp/2026-03-06T14-30-00__security-audit-swarm/`
 
 ## Project Discovery via CLI
 
@@ -52,7 +52,7 @@ Record what was found (and what wasn't) so the audit has clear provenance.
    - Identify the tech stack, auth, data stores, and external integrations.
    - Identify the attack surface: web app, API, CLI, background jobs, LLM features.
 2. Create the report output directory (see **Report Output** above).
-3. Create team: `TeamCreate: team_name = "security-audit"`.
+3. Create team: `TeamCreate: team_name = "security-audit-swarm"`.
 4. Create tasks per specialist and run in parallel.
 5. Run the Holistic Reviewer after specialists finish; write `SECURITY-AUDIT.md` in the report directory.
 

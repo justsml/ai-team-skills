@@ -1,5 +1,5 @@
 ---
-name: codebase-health
+name: codebase-health-swarm
 description: Combined architecture mapping, tech debt inventory, and performance profiling for a codebase. Use when the user asks for codebase health, architecture overview, refactor planning, tech debt assessment, or performance audit.
 ---
 
@@ -25,9 +25,9 @@ Use the first folder that exists. **NEVER modify `.gitignore`** without explicit
 
 Organize all report artifacts under a dated subfolder:
 ```
-{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{codebase-health}/
+{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{codebase-health-swarm}/
 ```
-Example: `tmp/2026-03-06T14-30-00__codebase-health/`
+Example: `tmp/2026-03-06T14-30-00__codebase-health-swarm/`
 
 ## Project Discovery via CLI
 
@@ -60,7 +60,7 @@ Record what was found (and what wasn't) so the assessment has clear provenance.
    - Identify tests, CI, and linting.
 2. Choose track(s).
 3. Create the report output directory (see **Report Output** above).
-4. Create team: `TeamCreate: team_name = "codebase-health"`.
+4. Create team: `TeamCreate: team_name = "codebase-health-swarm"`.
 5. Create tasks per track and run in parallel.
 6. Run the Health Lead synthesizer after specialists finish; write `CODEBASE-HEALTH.md` in the report directory.
 

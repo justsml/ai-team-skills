@@ -1,5 +1,5 @@
 ---
-name: branch-review
+name: branch-review-swarm
 description: Combined pre-PR shape check and merge-ready review for a branch or PR. Use when the user asks for a code review, PR review, sanity check, 10x engineer perspective, how to split a PR, or whether changes are ready to merge.
 ---
 
@@ -42,9 +42,9 @@ Use the first folder that exists. **NEVER modify `.gitignore`** without explicit
 
 Organize all report artifacts under a dated subfolder:
 ```
-{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{branch-review}/
+{REPORT_PATH}/{YYYY-MM-DDTHH-MM-SS}__{branch-review-swarm}/
 ```
-Example: `tmp/2026-03-06T14-30-00__branch-review/`
+Example: `tmp/2026-03-06T14-30-00__branch-review-swarm/`
 
 ## Project Discovery via CLI
 
@@ -97,9 +97,9 @@ Use common CLI tools to build a quick project profile before starting the review
    - 100-500 LOC: Shape or Merge based on user request.
    - > 500 LOC: Full; scope 10x + Organizer + Ruthless Reviewer to most-changed files.
 4. Create the report output directory (see **Report Output** above).
-5. Create team: `TeamCreate: team_name = "branch-review"`.
+5. Create team: `TeamCreate: team_name = "branch-review-swarm"`.
 6. Create tasks per specialist and run them in parallel.
-7. Run Synthesizer after specialists finish; write `branch-review.md` in the report directory.
+7. Run Synthesizer after specialists finish; write `branch-review-swarm.md` in the report directory.
 
 ## Specialists
 ### 10x Engineer (Shape)
@@ -192,7 +192,7 @@ Use one file per specialist in the report directory as `CR-<specialist>.md`.
 - <what works well>
 ```
 
-Synthesizer output: `branch-review.md` (in report directory)
+Synthesizer output: `branch-review-swarm.md` (in report directory)
 
 ```markdown
 # Change Review - <Branch>
