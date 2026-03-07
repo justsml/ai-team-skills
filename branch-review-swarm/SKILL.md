@@ -46,6 +46,18 @@ Organize all report artifacts under a dated subfolder:
 ```
 Example: `tmp/2026-03-06T14-30-00__branch-review-swarm/`
 
+## Excluded Paths
+
+When scoping diffs, searching code, or running analysis, **always exclude** these directories. They contain tool output, generated artifacts, or config — not source code under review.
+
+```
+.cache/  temp/  tmp/  .reports/  .claude/  .git/
+node_modules/  vendor/  dist/  build/  out/  coverage/
+__pycache__/  .next/  .nuxt/  .turbo/  .vercel/
+```
+
+For git diffs, use path exclusions: `git diff main...HEAD -- . ':!.cache' ':!temp' ':!tmp' ':!.claude'`
+
 ## Project Discovery via CLI
 
 Use common CLI tools to build a quick project profile before starting the review. Check if each binary exists before using it (`command -v <tool> >/dev/null 2>&1`), and fall back to alternatives when unavailable.

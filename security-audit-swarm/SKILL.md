@@ -23,6 +23,16 @@ Organize all report artifacts under a dated subfolder:
 ```
 Example: `tmp/2026-03-06T14-30-00__security-audit-swarm/`
 
+## Excluded Paths
+
+When scoping files or running analysis, **always exclude** these directories. They contain tool output, generated artifacts, or config — not source code under audit.
+
+```
+.cache/  temp/  tmp/  .reports/  .claude/  .git/
+node_modules/  vendor/  dist/  build/  out/  coverage/
+__pycache__/  .next/  .nuxt/  .turbo/  .vercel/
+```
+
 ## Project Discovery via CLI
 
 Use common CLI tools to build a quick project profile before starting the audit. Check if each binary exists before using it (`command -v <tool> >/dev/null 2>&1`), and fall back to alternatives when unavailable.
