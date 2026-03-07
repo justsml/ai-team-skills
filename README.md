@@ -109,7 +109,7 @@ produce a ranked remediation roadmap.
 | --- | --- |
 | End-to-end code quality gate | `branch-review-swarm` + `security-audit-swarm` |
 | Incident follow-up hardening | `security-audit-swarm` -> `competitive-swarm` |
-| Large PR cleanup and decomposition | `branch-review-swarm` (Shape) -> fix -> `branch-review-swarm` (Merge) |
+| Build feature, critically verify | `competitive-swarm` -> `branch-review-swarm` |
 
 ## What You’ll Get
 
