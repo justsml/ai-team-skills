@@ -4,7 +4,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/justsml/ai-team-skills?style=flat-square)](https://github.com/justsml/ai-team-skills/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/justsml/ai-team-skills?style=flat-square)](https://github.com/justsml/ai-team-skills/issues)
 [![Last commit](https://img.shields.io/github/last-commit/justsml/ai-team-skills?style=flat-square)](https://github.com/justsml/ai-team-skills/commits)
-![Skills](https://img.shields.io/badge/skills-4-blue?style=flat-square)
+![Skills](https://img.shields.io/badge/skills-5-blue?style=flat-square)
 ![Agent teams required](https://img.shields.io/badge/Claude%20agent%20teams-required-orange?style=flat-square)
 
 Multi-agent skills for faster, higher-signal engineering workflows.
@@ -14,6 +14,7 @@ Use these skills to run parallel specialist teams for:
 - Codebase health assessments
 - Security audits
 - Solution bake-offs with explicit tradeoffs
+- Research, root-cause analysis, and option evaluation
 
 ## Included Skills
 
@@ -23,6 +24,7 @@ Use these skills to run parallel specialist teams for:
 | [`codebase-health-swarm`](./codebase-health-swarm/SKILL.md) | Architecture mapping, debt inventory, performance opportunities | A ranked roadmap: now / next / later |
 | [`security-audit-swarm`](./security-audit-swarm/SKILL.md) | Vulnerability assessment and hardening guidance | Severity-ranked security report with must-fix items |
 | [`competitive-swarm`](./competitive-swarm/SKILL.md) | Multiple implementation approaches and tradeoff comparison | Bake-off results with winner and adopted plan |
+| [`research-problem-solving-swarm`](./research-problem-solving-swarm/SKILL.md) | Deep research, debugging, root-cause analysis, strategy or vendor comparison | A research memo with evaluated avenues, attempts, and a recommended path |
 
 ## Quick Start
 
@@ -49,7 +51,7 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 Install for all projects (user-level):
 
 ```bash
-cp -rfv ./branch-review-swarm ./codebase-health-swarm ./security-audit-swarm ./competitive-swarm \
+cp -rfv ./branch-review-swarm ./codebase-health-swarm ./security-audit-swarm ./competitive-swarm ./research-problem-solving-swarm \
   ~/.claude/skills/
 ```
 
@@ -60,13 +62,14 @@ ln -s "$(pwd)/branch-review-swarm" ~/.claude/skills/branch-review-swarm
 ln -s "$(pwd)/codebase-health-swarm" ~/.claude/skills/codebase-health-swarm
 ln -s "$(pwd)/security-audit-swarm" ~/.claude/skills/security-audit-swarm
 ln -s "$(pwd)/competitive-swarm" ~/.claude/skills/competitive-swarm
+ln -s "$(pwd)/research-problem-solving-swarm" ~/.claude/skills/research-problem-solving-swarm
 ```
 
 Install per-project:
 
 ```bash
 mkdir -p .claude/skills
-cp -rfv ./branch-review-swarm ./codebase-health-swarm ./security-audit-swarm ./competitive-swarm \
+cp -rfv ./branch-review-swarm ./codebase-health-swarm ./security-audit-swarm ./competitive-swarm ./research-problem-solving-swarm \
   .claude/skills/
 ```
 
@@ -79,10 +82,11 @@ cp -rfv ./branch-review-swarm ./codebase-health-swarm ./security-audit-swarm ./c
 | Whole-repo architecture + debt + perf | `codebase-health-swarm` (Full track) |
 | Security posture and exploit paths | `security-audit-swarm` |
 | Build the best possible features | `competitive-swarm` |
+| Deep research, root-cause analysis, and option memos | `research-problem-solving-swarm` |
 
 ## Prompt Starters
 
-You can use the skills via slash commands `/branch-review-swarm`, `/codebase-health-swarm`, etc.) or you can add some details, tune the focus, set the model, or constrain the scope with natural language.
+You can use the skills via slash commands `/branch-review-swarm`, `/codebase-health-swarm`, and so on, or you can add some details, tune the focus, set the model, or constrain the scope with natural language.
 
 Use prompts like these in Claude Code/Codex/OpenCode/etc. to get started:
 
@@ -103,6 +107,11 @@ produce a ranked remediation roadmap.
 /competitive-swarm add a custom emoji picker with upload support.
 ```
 
+```text
+/research-problem-solving-swarm
+figure out why CI is flaky, explore multiple plausible causes, try targeted checks, and save a memo to docs/research/ci-flakiness.md.
+```
+
 ## High-Value Skill Chains
 
 | Objective | Chain |
@@ -110,6 +119,7 @@ produce a ranked remediation roadmap.
 | End-to-end code quality gate | `branch-review-swarm` + `security-audit-swarm` |
 | Incident follow-up hardening | `security-audit-swarm` -> `competitive-swarm` |
 | Build feature, critically verify | `competitive-swarm` -> `branch-review-swarm` |
+| Investigate before committing to an approach | `research-problem-solving-swarm` -> `competitive-swarm` |
 
 ## What You’ll Get
 
@@ -128,6 +138,10 @@ You get:
 │   └── SKILL.md
 ├── codebase-health-swarm/
 │   └── SKILL.md
+├── research-problem-solving-swarm/
+│   ├── SKILL.md
+│   └── references/
+│       └── export-destinations.md
 ├── security-audit-swarm/
 │   └── SKILL.md
 └── competitive-swarm/
